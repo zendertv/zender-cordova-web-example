@@ -1,0 +1,39 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      Zender Ionic/Cordova Web Example
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="ion-padding">
+
+
+ <form (ngSubmit)="saveConfig()">
+   <ion-item>
+  <ion-label>TargetId</ion-label>
+  <ion-input [(ngModel)]="zenderconfig.targetId" name="targetId"></ion-input>
+</ion-item>
+
+<ion-item>
+  <ion-label>ChannelId</ion-label>
+  <ion-input [(ngModel)]="zenderconfig.channelId" name="channelId"></ion-input>
+</ion-item>
+
+
+<ion-item>
+    <ion-label>Production</ion-label>
+    <ion-toggle [(ngModel)]="zenderconfig.enviroment" name="environment"></ion-toggle>
+ </ion-item>
+
+      <button ion-button type="submit" block>Save</button>
+
+</form>
+
+
+ <button ion-button (click)="openZenderPlayer()">Open Zender Player</button>
+
+  </div>
+</ion-content>
+
