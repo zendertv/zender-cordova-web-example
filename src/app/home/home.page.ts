@@ -12,6 +12,11 @@ export class HomePage {
   theInAppBrowser : InAppBrowser;
 
   zenderconfig = new Map();
+  iframeUrl = "";
+  environments = [
+	'production',
+	'staging'
+  ]
 
    options : InAppBrowserOptions = {
 	    location : 'yes',//Or 'no'
@@ -38,40 +43,81 @@ export class HomePage {
 
    constructor(private storage: Storage) {
 	this.theInAppBrowser=new InAppBrowser();
+
+  	window.addEventListener("message", this.receiveMessage, false);
             
         // Retrieve saved values
-	storage.get('targetId').then((val) => {
+	storage.get('ZenderTargetId').then((val) => {
 	 this.zenderconfig["targetId"]=val;
 	});
 
-	storage.get('channelId').then((val) => {
+	storage.get('ZenderChannelId').then((val) => {
 	 this.zenderconfig["channelId"]=val;
+	});
+
+	storage.get('ZenderEnvironment').then((val) => {
+		if (!val) {
+		 this.zenderconfig["environment"]="production";
+		} else {
+		 this.zenderconfig["environment"]=val;
+		}
 	});
 
     };
 
-    public openZenderPlayer(){
+    public receiveMessage(event) {
+	console.log("=====> receive message :", event.data);
+	// Experimental
+	// Needs more mapping
+	if (event.data.type=="zender-native-client-close-player") {
+		var player = document.getElementById('player');
+		player.innerHTML="";
+	}
+    };
+
+    public getUrlPrefix(environment) {
+	if (this.zenderconfig["environment"] == "production") {
+		return  "https://player2.zender.tv/";
+	} else {
+		return "https://player2.staging.zender.tv/";
+	}
+    }
+
+    public openZenderPlayerIframe(){
         var targetId = this.zenderconfig["targetId"];
 	var channelId = this.zenderconfig["channelId"];
 
-        let url = "https://player2.zender.tv/"+targetId+"/"+channelId;
+	// close=shows the close button to close the browser
+	// mutedMobile = doesn't mute on ios Native
+        this.iframeUrl = this.getUrlPrefix()+targetId+"/channels/"+channelId+"/streams?close=true&mutedMobile=false&events=%22*%22"
+	console.log("===> url ",this.iframeUrl);
+	var iframe = document.createElement('iframe');
+	iframe.setAttribute('src',this.iframeUrl);
+	iframe.setAttribute('width',"100%");
+	iframe.setAttribute('height',"100%");
+	var player = document.getElementById('player');
+	player.appendChild(iframe);
+
+    };
+
+    public openZenderPlayerInAppBrowser(){
+        var targetId = this.zenderconfig["targetId"];
+	var channelId = this.zenderconfig["channelId"];
+
+        let url = this.getUrlPrefix()+targetId+"/channels/"+channelId+"/streams/?close=true&mutedMobile=false&events=%22*%22";
 	let target = "_blank";
 	let browser=this.theInAppBrowser.create(url,target,this.options);
 
-	/*
-	setTimeout(function(){ 
-		console.log("tapping");
-	browser.executeScript({code: 'document.getElementsByClassName("mutedtoggle")[0].click(); return true;' });
-	}, 9000);
-	*/
     }
 
     saveConfig() {
 	console.log('saving targetId :', this.zenderconfig["targetId"]);
 	console.log('saving channelId:',this.zenderconfig["channelId"]);
+	console.log('saving environment:',this.zenderconfig["environment"]);
 
-	this.storage.set('targetId',this.zenderconfig["targetId"]);
-	this.storage.set('channelId',this.zenderconfig["channelId"]);
+	this.storage.set('ZenderTargetId',this.zenderconfig["targetId"]);
+	this.storage.set('ZenderChannelId',this.zenderconfig["channelId"]);
+	this.storage.set('ZenderEnvironment',this.zenderconfig["environment"]);
 
      }
 

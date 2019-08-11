@@ -13,6 +13,7 @@
     <allow-intent href="geo:*" />
     <allow-navigation href="http://*/*" />
     <allow-navigation href="https://*/*" />
+    <preference name="AllowInlineMediaPlayback" value="true" />
     <preference name="ScrollEnabled" value="false" />
     <preference name="android-minSdkVersion" value="19" />
     <preference name="BackupWebStorage" value="none" />

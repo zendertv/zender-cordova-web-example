@@ -1,3 +1,6 @@
+<div id="player" style="height: 500px ; width: 100%">
+</div>
+
 <ion-header>
   <ion-toolbar>
     <ion-title>
@@ -23,8 +26,11 @@
 
 
 <ion-item>
-    <ion-label>Production</ion-label>
-    <ion-toggle [(ngModel)]="zenderconfig.enviroment" name="environment"></ion-toggle>
+    <ion-label>Environment</ion-label>
+    <ion-select [(ngModel)]="zenderconfig.environment" name="environment">
+	<ion-select-option value="staging">staging</ion-select-option>
+        <ion-select-option value="production">production</ion-select-option>
+    </ion-select>
  </ion-item>
 
       <button ion-button type="submit" block>Save</button>
@@ -32,7 +38,8 @@
 </form>
 
 
- <button ion-button (click)="openZenderPlayer()">Open Zender Player</button>
+ <button ion-button (click)="openZenderPlayerIframe()">Open Zender Player (iframe)</button>
+ <button ion-button (click)="openZenderPlayerInAppBrowser()">Open Zender Player (in App Browser)</button>
 
   </div>
 </ion-content>
